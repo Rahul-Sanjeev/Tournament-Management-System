@@ -4,11 +4,11 @@ import axios from 'axios'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 
 const EventSelector = ({ event, isSelected, onToggle }) => (
-  <div 
+  <div
     onClick={onToggle}
     className={`relative p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer
       ${isSelected
-        ? 'border-karate-blue bg-blue-50 ring-2 ring-karate-blue/20'
+        ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-600/20'
         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
       }`}
   >
@@ -21,8 +21,8 @@ const EventSelector = ({ event, isSelected, onToggle }) => (
           <input
             type="checkbox"
             checked={isSelected}
-            onChange={() => {}} // Handled by parent div click
-            className="h-4 w-4 text-karate-blue rounded border-gray-300 focus:ring-karate-blue"
+            onChange={() => { }} // Handled by parent div click
+            className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
           />
         </div>
         <div className="mt-1 text-xs text-gray-500 space-y-1">
@@ -139,7 +139,7 @@ const ParticipantEdit = () => {
 
       {loading || !formData ? (
         <div className="flex justify-center items-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-karate-blue"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -283,7 +283,7 @@ const ParticipantEdit = () => {
                   type="checkbox"
                   id="is_team_event"
                   name="is_team_event"
-                  className="h-4 w-4 text-karate-blue focus:ring-karate-blue border-gray-300 rounded"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   checked={formData.is_team_event}
                   onChange={handleChange}
                 />
@@ -312,7 +312,7 @@ const ParticipantEdit = () => {
           {/* Events Selection Card */}
           <div className="bg-white shadow-sm rounded-lg p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-6">Event Registration</h3>
-            
+
             {/* Individual Events */}
             <div className="mb-8">
               <h4 className="text-sm font-medium text-gray-700 mb-4">Individual Events</h4>
@@ -365,14 +365,14 @@ const ParticipantEdit = () => {
             <button
               type="button"
               onClick={() => navigate(`/tournament/${id}`)}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue disabled:opacity-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-karate-blue disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
             >
               {loading ? (
                 <div className="flex items-center">

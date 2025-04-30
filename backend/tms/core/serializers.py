@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Event, Match, Participant, Tournament
+from .models import Event, Match, Participant, Tournament, Bracket
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -75,15 +75,10 @@ class MatchSerializer(serializers.ModelSerializer):
 
 
 class BracketSerializer(serializers.ModelSerializer):
-    matches = MatchSerializer(many=True, read_only=True)
-    participants = ParticipantListSerializer(many=True, read_only=True)
-
     class Meta:
-        model = Event
-        fields = (
-            'id', 'category', 'age_category', 'gender', 'weight_category',
-            'status', 'matches', 'participants'
-        )
+        model = Bracket
+        fields = ['id', 'event', 'name', 'max_participants', 'status', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
 
 
 

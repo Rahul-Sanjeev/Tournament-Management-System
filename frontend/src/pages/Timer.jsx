@@ -153,20 +153,18 @@ const Timer = () => {
               <button
                 key={key}
                 onClick={() => resetTimer(key)}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                  selectedPreset === key
-                    ? 'bg-karate-blue text-white'
+                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${selectedPreset === key
+                    ? 'bg-blue-600 text-white'
                     : 'bg-white text-gray-700 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 {preset.name}
               </button>
             ))}
             <button
               onClick={() => setIsSoundEnabled(!isSoundEnabled)}
-              className={`ml-auto px-3 py-1 rounded text-sm font-medium transition-colors ${
-                isSoundEnabled ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}
+              className={`ml-auto px-3 py-1 rounded text-sm font-medium transition-colors ${isSoundEnabled ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}
             >
               {isSoundEnabled ? (
                 <SpeakerWaveIcon className="h-5 w-5" />
@@ -179,9 +177,8 @@ const Timer = () => {
 
         {/* Timer Display */}
         <div className="p-8 text-center">
-          <div className={`text-6xl font-mono font-bold mb-8 ${
-            time <= 10 && time > 0 ? 'text-red-600 animate-pulse' : ''
-          }`}>
+          <div className={`text-6xl font-mono font-bold mb-8 ${time <= 10 && time > 0 ? 'text-red-600 animate-pulse' : ''
+            }`}>
             {formatTime(time)}
           </div>
 
@@ -189,11 +186,10 @@ const Timer = () => {
           <div className="flex justify-center space-x-4 mb-8">
             <button
               onClick={toggleTimer}
-              className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
-                isRunning
+              className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${isRunning
                   ? 'bg-red-600 text-white hover:bg-red-700'
                   : 'bg-green-600 text-white hover:bg-green-700'
-              }`}
+                }`}
             >
               {isRunning ? (
                 <>
@@ -240,11 +236,10 @@ const Timer = () => {
               <div>
                 <button
                   onClick={() => addWarning('aka')}
-                  className={`px-3 py-1 rounded hover:bg-yellow-200 ${
-                    warnings.aka >= 2 
+                  className={`px-3 py-1 rounded hover:bg-yellow-200 ${warnings.aka >= 2
                       ? 'bg-red-100 text-red-700'
                       : 'bg-yellow-100 text-yellow-700'
-                  }`}
+                    }`}
                   title="Shift + W"
                 >
                   Warning ({warnings.aka})
@@ -274,11 +269,10 @@ const Timer = () => {
               <div>
                 <button
                   onClick={() => addWarning('ao')}
-                  className={`px-3 py-1 rounded hover:bg-yellow-200 ${
-                    warnings.ao >= 2 
+                  className={`px-3 py-1 rounded hover:bg-yellow-200 ${warnings.ao >= 2
                       ? 'bg-red-100 text-red-700'
                       : 'bg-yellow-100 text-yellow-700'
-                  }`}
+                    }`}
                   title="Ctrl/Cmd + W"
                 >
                   Warning ({warnings.ao})
@@ -296,15 +290,14 @@ const Timer = () => {
               <div className="text-center mb-4">
                 <div className="text-xl">
                   Winner:{' '}
-                  <span className={`font-bold ${
-                    points.aka > points.ao ? 'text-red-600' :
-                    points.ao > points.aka ? 'text-blue-600' : ''
-                  }`}>
+                  <span className={`font-bold ${points.aka > points.ao ? 'text-red-600' :
+                      points.ao > points.aka ? 'text-blue-600' : ''
+                    }`}>
                     {points.aka > points.ao
                       ? 'AKA'
                       : points.ao > points.aka
-                      ? 'AO'
-                      : 'DRAW'}
+                        ? 'AO'
+                        : 'DRAW'}
                   </span>
                 </div>
                 <div className="mt-2">
@@ -314,7 +307,7 @@ const Timer = () => {
               <div className="flex justify-center">
                 <button
                   onClick={() => resetTimer()}
-                  className="px-4 py-2 bg-karate-blue text-white rounded hover:bg-karate-blue/90"
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                   New Match
                 </button>

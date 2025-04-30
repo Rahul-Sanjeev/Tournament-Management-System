@@ -7,7 +7,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import TournamentCreate from './pages/TournamentCreate';
 import TournamentView from './pages/TournamentView';
-import BracketMaking from './pages/BracketMaking';
+import EventParticipants from './pages/BracketMaking';
 import Timer from './pages/Timer';
 import ParticipantAdd from './pages/ParticipantAdd';
 import ParticipantEdit from './pages/ParticipantEdit';
@@ -29,7 +29,7 @@ function App() {
 
               <Route path="/tournament/:id/brackets" element={
                 <ErrorBoundary>
-                  <BracketMaking />
+                  <EventParticipants />
                 </ErrorBoundary>
               } />
 

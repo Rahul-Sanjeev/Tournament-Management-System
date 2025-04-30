@@ -5,8 +5,12 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import DatePicker from 'react-datepicker';
+import { format, parse } from 'date-fns';
+import 'react-datepicker/dist/react-datepicker.css';
+
 const EventSelector = ({ event, isSelected, onToggle }) => (
-  <div 
+  <div
     onClick={onToggle}
     className={`relative p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer
       ${isSelected
@@ -23,8 +27,8 @@ const EventSelector = ({ event, isSelected, onToggle }) => (
           <input
             type="checkbox"
             checked={isSelected}
-            onChange={() => {}} // Handled by parent div click
-            className="h-4 w-4 text-karate-blue rounded border-gray-300 focus:ring-karate-blue"
+            onChange={() => { }} // Handled by parent div click
+            className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
           />
         </div>
         <div className="mt-1 text-xs text-gray-500 space-y-1">
@@ -50,12 +54,12 @@ const FloatingLabelInput = ({ id, label, type = 'text', required = true, value, 
       value={value}
       onChange={onChange}
       placeholder=" "
-      className="block w-full px-4 py-3 text-gray-900 placeholder-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-karate-blue focus:border-transparent peer"
+      className="block w-full px-4 py-3 text-gray-900 placeholder-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
       {...props}
     />
     <label
       htmlFor={id}
-      className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-karate-blue"
+      className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-blue-600"
     >
       {label}
     </label>
@@ -75,9 +79,11 @@ const ParticipantAdd = () => {
     date_of_birth: '',
     gender: 'M',
     weight: '',
-    belt_rank: '9KYU',
+    belt_rank: 'NIL',
     club: '',
-    country: '',
+    district: '',
+    state: 'Kerala',
+    country: 'India',
     is_team_event: false,
     team_name: '',
     events: []
@@ -120,11 +126,11 @@ const ParticipantAdd = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setModifiedFields(prev => new Set([...prev, name]))
-    
+
     if (type === 'checkbox') {
       if (name === 'events') {
         const eventId = Number(value)
-        const updatedEvents = checked 
+        const updatedEvents = checked
           ? [...formData.events, eventId]
           : formData.events.filter(id => id !== eventId)
         setFormData(prev => ({ ...prev, events: updatedEvents }))
@@ -139,7 +145,7 @@ const ParticipantAdd = () => {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <ToastContainer position="top-right" autoClose={3000} />
-      
+
       {/* Back Button */}
       <button
         onClick={() => navigate(`/tournament/${id}`)}
@@ -152,7 +158,7 @@ const ParticipantAdd = () => {
       {/* Form Content */}
       <div className="bg-white shadow-sm rounded-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Add Participant</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Personal Information */}
           <div className="space-y-6">
@@ -172,20 +178,37 @@ const ParticipantAdd = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <FloatingLabelInput
-                id="date_of_birth"
-                label="Date of Birth"
-                type="date"
-                value={formData.date_of_birth}
-                onChange={handleChange}
-              />
+              <div className="relative">
+                <DatePicker
+                  id="date_of_birth"
+                  selected={formData.date_of_birth ? parse(formData.date_of_birth, 'yyyy-MM-dd', new Date()) : null}
+                  onChange={(date) => {
+                    handleChange({
+                      target: {
+                        name: 'date_of_birth',
+                        value: date ? format(date, 'yyyy-MM-dd') : ''
+                      }
+                    });
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="DD/MM/YYYY"
+                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  showYearDropdown
+                  dropdownMode="select"
+                />
+                <label className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600">
+                  Date of Birth
+                </label>
+              </div>
+
+
               <div className="relative">
                 <select
                   id="gender"
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-karate-blue focus:border-transparent"
+                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="M">Male</option>
                   <option value="F">Female</option>
@@ -211,8 +234,9 @@ const ParticipantAdd = () => {
                   name="belt_rank"
                   value={formData.belt_rank}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-karate-blue focus:border-transparent"
+                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
+                  <option value="NIL">Not Applicable</option> {/* Default first */}
                   <option value="9KYU">9th Kyu - White Belt</option>
                   <option value="8KYU">8th Kyu - Yellow Belt</option>
                   <option value="7KYU">7th Kyu - Orange Belt</option>
@@ -242,6 +266,18 @@ const ParticipantAdd = () => {
                 onChange={handleChange}
               />
               <FloatingLabelInput
+                id="district"
+                label="District"
+                value={formData.district}
+                onChange={handleChange}
+              />
+              <FloatingLabelInput
+                id="state"
+                label="State"
+                value={formData.state}
+                onChange={handleChange}
+              />
+              <FloatingLabelInput
                 id="country"
                 label="Country"
                 value={formData.country}
@@ -253,13 +289,16 @@ const ParticipantAdd = () => {
           {/* Events Selection */}
           <div className="bg-white shadow-sm rounded-lg p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-6">Event Registration</h3>
-            
+
             {/* Individual Events */}
             <div className="mb-8">
               <h4 className="text-sm font-medium text-gray-700 mb-4">Individual Events</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {events
-                  .filter(event => !event.category.includes('TEAM'))
+                  .filter(event =>
+                    !event.category.includes('TEAM') &&
+                    event.gender === formData.gender
+                  )
                   .map(event => (
                     <EventSelector
                       key={event.id}
@@ -282,7 +321,10 @@ const ParticipantAdd = () => {
               <h4 className="text-sm font-medium text-gray-700 mb-4">Team Events</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {events
-                  .filter(event => event.category.includes('TEAM'))
+                  .filter(event =>
+                    event.category.includes('TEAM') &&
+                    event.gender === formData.gender
+                  )
                   .map(event => (
                     <EventSelector
                       key={event.id}
@@ -306,14 +348,14 @@ const ParticipantAdd = () => {
             <button
               type="button"
               onClick={() => navigate(`/tournament/${id}`)}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-karate-blue disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-karate-blue disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
             >
               {loading ? (
                 <div className="flex items-center">
@@ -326,8 +368,8 @@ const ParticipantAdd = () => {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </div >
+    </div >
   )
 }
 

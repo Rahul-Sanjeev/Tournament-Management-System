@@ -16,7 +16,7 @@ const Landing = () => {
             }}
           />
         </div>
-        
+
         <div className="mx-auto max-w-3xl py-32 sm:py-48 lg:py-32">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -29,7 +29,7 @@ const Landing = () => {
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
                 to="/login"
-                className="rounded-md bg-karate-blue px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-karate-blue/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-karate-blue"
+                className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
               >
                 Get Started
               </Link>

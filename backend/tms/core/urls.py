@@ -9,6 +9,7 @@ router.register(r'tournaments', views.TournamentViewSet)
 router.register(r'events', views.EventViewSet)
 router.register(r'participants', views.ParticipantViewSet)
 router.register(r'matches', views.MatchViewSet)
+router.register(r'brackets', views.BracketViewSet)
 
 urlpatterns = [
     path('auth/login/', views.login, name='login'),
@@ -16,5 +17,11 @@ urlpatterns = [
     path('tournaments/<int:pk>/add-sample-participants/', 
          views.TournamentViewSet.as_view({'post': 'add_sample_participants'}), 
          name='add-sample-participants'),
+    path('tournaments/<int:pk>/generate_events/', 
+         views.TournamentViewSet.as_view({'post': 'generate_events'}), 
+         name='generate-events'),
+    path('events/<int:pk>/generate_brackets/', 
+         views.EventViewSet.as_view({'post': 'generate_brackets'}), 
+         name='generate-brackets'),
     path('', include(router.urls)),
 ]

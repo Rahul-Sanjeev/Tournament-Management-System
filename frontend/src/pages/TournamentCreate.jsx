@@ -48,12 +48,12 @@ const TournamentCreate = () => {
         value={value}
         onChange={onChange}
         placeholder=" "
-        className="block w-full px-4 py-3 text-gray-900 placeholder-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-karate-blue focus:border-transparent peer"
+        className="block w-full px-4 py-3 text-gray-900 placeholder-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
         {...props}
       />
       <label
         htmlFor={id}
-        className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-karate-blue"
+        className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-blue-600"
       >
         {label}
       </label>
@@ -70,12 +70,12 @@ const TournamentCreate = () => {
         value={value}
         onChange={onChange}
         placeholder=" "
-        className="block w-full px-4 py-3 text-gray-900 placeholder-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-karate-blue focus:border-transparent peer"
+        className="block w-full px-4 py-3 text-gray-900 placeholder-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
         {...props}
       />
       <label
         htmlFor={id}
-        className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-karate-blue"
+        className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-blue-600"
       >
         {label}
       </label>
@@ -127,7 +127,7 @@ const TournamentCreate = () => {
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-karate-blue"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Cancel
             </button>

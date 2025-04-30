@@ -1,6 +1,8 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
+import math
+import random
 
 
 class Tournament(models.Model):
@@ -186,3 +188,83 @@ class Match(models.Model):
 
     def __str__(self):
         return f"Match {self.match_number} (Round {self.round_number}) - {self.event}"
+
+class Bracket(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='brackets')
+    name = models.CharField(max_length=100)
+    max_participants = models.PositiveIntegerField(default=10)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('PENDING', 'Pending'),
+            ('IN_PROGRESS', 'In Progress'),
+            ('COMPLETED', 'Completed')
+        ],
+        default='PENDING'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ['event', 'name']
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.name} - {self.event}"
+
+    def generate_matches(self):
+        # Get all participants for this bracket
+        participants = list(self.event.participants.all())
+        
+        if not participants:
+            raise ValueError("No participants found for this event")
+            
+        if len(participants) < 2:
+            raise ValueError("Need at least 2 participants to generate matches")
+        
+        # Clear existing matches for this bracket only
+        Match.objects.filter(bracket=self).delete()
+        
+        # Calculate number of rounds needed (next power of 2)
+        num_participants = len(participants)
+        bracket_size = 1
+        while bracket_size < num_participants:
+            bracket_size *= 2
+            
+        num_rounds = int(math.log2(bracket_size))
+        
+        # Create matches for each round
+        matches = []
+        for round_num in range(1, num_rounds + 1):
+            num_matches = bracket_size // (2 ** round_num)
+            for match_num in range(1, num_matches + 1):
+                match = Match.objects.create(
+                    event=self.event,
+                    bracket=self,
+                    round_number=round_num,
+                    match_number=match_num,
+                    status='PENDING'
+                )
+                matches.append(match)
+                
+        # Assign participants to first round matches
+        first_round_matches = [m for m in matches if m.round_number == 1]
+        num_first_round_matches = len(first_round_matches)
+        
+        # Shuffle participants to randomize matchups
+        random.shuffle(participants)
+        
+        # Assign participants to matches
+        for i, participant in enumerate(participants):
+            if i < num_first_round_matches:
+                match = first_round_matches[i]
+                if i % 2 == 0:
+                    match.competitor1 = participant
+                else:
+                    match.competitor2 = participant
+                match.save()
+                
+        self.status = 'IN_PROGRESS'
+        self.save()
+        
+        return matches

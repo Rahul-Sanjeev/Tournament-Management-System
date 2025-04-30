@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import axios from '../utils/axios';
 
 const AuthContext = createContext(null);
@@ -8,11 +8,54 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [lastAttemptTime, setLastAttemptTime] = useState(null);
-  const [refreshTokenTimeoutId, setRefreshTokenTimeoutId] = useState(null);
+  const refreshTokenTimeoutRef = useRef(null);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('user');
+    delete axios.defaults.headers.common['Authorization'];
+    if (refreshTokenTimeoutRef.current) {
+      clearTimeout(refreshTokenTimeoutRef.current);
+      refreshTokenTimeoutRef.current = null;
+    }
+    setUser(null);
+  }, []);
+
+  const setupTokenRefresh = useCallback(async (refreshToken) => {
+    try {
+      const response = await axios.post('/api/auth/refresh/', { refresh: refreshToken });
+      const { access: newToken } = response.data;
+
+      // Store new token
+      const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
+      storage.setItem('token', newToken);
+      storage.setItem('refreshToken', refreshToken);
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+
+      // Set up next refresh - 2 minutes before expiration
+      if (refreshTokenTimeoutRef.current) {
+        clearTimeout(refreshTokenTimeoutRef.current);
+      }
+
+      refreshTokenTimeoutRef.current = setTimeout(() => {
+        setupTokenRefresh(refreshToken);
+      }, 58 * 60 * 1000); // Refresh 2 minutes before expiration
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      if (error.response?.status === 401 || error.response?.status === 500) {
+        logout();
+      }
+    }
+  }, [logout]);
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
       const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
 
@@ -32,36 +75,11 @@ export const AuthProvider = ({ children }) => {
 
     initializeAuth();
     return () => {
-      if (refreshTokenTimeoutId) {
-        clearTimeout(refreshTokenTimeoutId);
+      if (refreshTokenTimeoutRef.current) {
+        clearTimeout(refreshTokenTimeoutRef.current);
       }
     };
-  }, []);
-
-  const setupTokenRefresh = async (refreshToken) => {
-    try {
-      const response = await axios.post('/auth/refresh/', { refresh: refreshToken });
-      const { access: newToken } = response.data;
-
-      // Store new token
-      const storage = localStorage.getItem('authToken') ? localStorage : sessionStorage;
-      storage.setItem('token', newToken);
-
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-
-      // Set up next refresh - 2 minutes before expiration
-      const timeoutId = setTimeout(() => {
-        setupTokenRefresh(refreshToken);
-      }, 58 * 60 * 1000); // Refresh 2 minutes before expiration
-
-      setRefreshTokenTimeoutId(timeoutId);
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      if (error.response?.status === 401) {
-        logout();
-      }
-    }
-  };
+  }, [logout, setupTokenRefresh]);
 
   const validatePassword = (password) => {
     if (!password) {
@@ -127,20 +145,6 @@ export const AuthProvider = ({ children }) => {
       }
       return { success: false, error: errorMessage };
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('refreshToken');
-    sessionStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
-    if (refreshTokenTimeoutId) {
-      clearTimeout(refreshTokenTimeoutId);
-    }
-    setUser(null);
   };
 
   const requestPasswordReset = async (email) => {

@@ -355,6 +355,7 @@
 
 
 import math
+import random
 
 from django.contrib.auth import authenticate
 from django.db import transaction
@@ -365,7 +366,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Event, Match, Participant, Tournament
+from .models import Event, Match, Participant, Tournament, Bracket
 from .serializers import (BracketSerializer, EventSerializer, MatchSerializer,
                           ParticipantDetailSerializer,
                           ParticipantListSerializer, TournamentSerializer)
@@ -499,19 +500,41 @@ class EventViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def generate_brackets(self, request, pk=None):
+        """
+        Simplified bracket generation - creates one bracket per event
+        with all participants from that event.
+        """
         event = self.get_object()
         participants = list(event.participants.all())
+        
         if len(participants) < 2:
             return Response(
                 {'error': 'Need at least 2 participants to generate brackets'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+            
+        # Create a single bracket for this event
         with transaction.atomic():
-            Match.objects.filter(event=event).delete()
+            # Delete any existing brackets for this event
+            event.brackets.all().delete()
+            
+            # Create a new bracket
+            bracket = Bracket.objects.create(
+                event=event,
+                name=f"{event.get_category_display()} Bracket",
+                max_participants=len(participants)
+            )
+            
+            # Generate matches directly
             num_participants = len(participants)
-            bracket_size = min(8, 1 << (num_participants - 1).bit_length())
+            bracket_size = min(32, 1 << (num_participants - 1).bit_length())
             num_rounds = int(math.log2(bracket_size))
+            
+            # Randomize participants and fill the bracket
+            random.shuffle(participants)
             seeded = participants + [None] * (bracket_size - num_participants)
+            
+            # Create first round matches
             matches = []
             for i in range(0, bracket_size, 2):
                 match = Match.objects.create(
@@ -522,6 +545,8 @@ class EventViewSet(viewsets.ModelViewSet):
                     competitor2=seeded[i + 1] if i + 1 < len(seeded) else None
                 )
                 matches.append(match)
+                
+            # Create subsequent round placeholders
             current_matches = matches
             for r in range(2, num_rounds + 1):
                 next_matches = []
@@ -536,10 +561,22 @@ class EventViewSet(viewsets.ModelViewSet):
                     next_matches.append(match)
                 current_matches = next_matches
                 matches.extend(next_matches)
+                
+            # Update event status
             event.status = 'IN_PROGRESS'
             event.save()
-        matches = Match.objects.filter(event=event).order_by('round_number', 'match_number')
-        return Response(MatchSerializer(matches, many=True).data)
+            
+            # Update bracket status
+            bracket.status = 'IN_PROGRESS'
+            bracket.save()
+            
+        # Return all matches
+        all_matches = Match.objects.filter(event=event).order_by('round_number', 'match_number')
+        return Response({
+            'message': 'Bracket created successfully',
+            'bracket': BracketSerializer(bracket).data,
+            'matches': MatchSerializer(all_matches, many=True).data
+        })
 
 class ParticipantViewSet(viewsets.ModelViewSet):
     queryset = Participant.objects.all()
@@ -553,9 +590,17 @@ class ParticipantViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Participant.objects.all()
         tournament_id = self.request.query_params.get('tournament', None)
+        event_id = self.request.query_params.get('event', None)
         if tournament_id:
             queryset = queryset.filter(tournament_id=tournament_id)
-        return queryset
+        if event_id:
+            # Filter participants who have this event in their many-to-many relationship
+            queryset = queryset.filter(events__id=event_id)
+            
+        return queryset.distinct()  # Use distinct() to avoid duplicates in M2M relationships
+    
+
+        
 
     def create(self, request, *args, **kwargs):
         print('Received data:', request.data)
@@ -577,3 +622,21 @@ class MatchViewSet(viewsets.ModelViewSet):
         if event_id:
             queryset = queryset.filter(event_id=event_id)
         return queryset.order_by('round_number', 'match_number')
+
+class BracketViewSet(viewsets.ModelViewSet):
+    queryset = Bracket.objects.all()
+    serializer_class = BracketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Bracket.objects.all()
+        event_id = self.request.query_params.get('event', None)
+        if event_id is not None:
+            queryset = queryset.filter(event_id=event_id)
+        return queryset
+
+    @action(detail=True, methods=['post'])
+    def generate_matches(self, request, pk=None):
+        bracket = self.get_object()
+        bracket.generate_matches()
+        return Response({'status': 'matches generated'})

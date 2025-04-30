@@ -336,7 +336,7 @@ const TournamentView = () => {
                             <div className="flex justify-end gap-2">
                               <button
                                 onClick={() => navigate(`/tournament/${id}/participants/${participant.id}/edit`)}
-                                className="text-karate-blue hover:text-karate-blue/80"
+                                className="text-blue-600 hover:text-blue-700"
                               >
                                 <PencilIcon className="h-5 w-5" />
                                 <span className="sr-only">Edit</span>
