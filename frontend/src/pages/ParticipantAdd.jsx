@@ -201,7 +201,6 @@ const ParticipantAdd = () => {
                 </label>
               </div>
 
-
               <div className="relative">
                 <select
                   id="gender"
