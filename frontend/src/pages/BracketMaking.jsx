@@ -148,29 +148,32 @@ const EventParticipants = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Modern Filter Sidebar */}
-        <div className="lg:w-72 xl:w-80">
-          <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 lg:sticky lg:top-8">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
-              <h3 className="text-base font-semibold text-gray-800">Filters</h3>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Filter Sidebar - Updated with better spacing and modern card design */}
+        <div className="lg:w-80 xl:w-96">
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 lg:sticky lg:top-8">
+            {/* Header section with subtle border */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Event Filters</h3>
               <button
                 onClick={() => setFilters({ eventType: 'ALL', participationType: 'ALL', gender: 'ALL' })}
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
-                Clear
+                Reset Filters
               </button>
             </div>
 
-            <div className="space-y-4">
+            {/* Filter controls with better spacing */}
+            <div className="space-y-6">
+              {/* Event Type Filter - Updated select styling */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Event Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Event Type</label>
                 <div className="relative">
                   <select
                     value={filters.eventType}
                     onChange={(e) => setFilters(prev => ({ ...prev, eventType: e.target.value }))}
-                    className="w-full items-center text-center justify-center pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg appearance-none bg-white bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iY2hldnJvbi1kb3duIHctNCBoLTQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTEuNjQ2IDQuNjQ2YS41LjUgMCAwIDEgLjcwOCAwbDYgNmEuNS41IDAgMCAxLS43MDguNzA4TDEyIDUuNzA3IDYuMzU0IDExLjM1NGEuNS41IDAgMCAxLS43MDgtLjcwOGw2LTZ6IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=')] bg-no-repeat bg-right-2 bg-contain"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
                   >
                     <option value="ALL">All Event Types</option>
                     <option value="KATA">Kata</option>
@@ -179,107 +182,80 @@ const EventParticipants = () => {
                 </div>
               </div>
 
+              {/* Participation Type Filter - Grid buttons with improved hover states */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Category</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => setFilters(prev => ({ ...prev, participationType: 'ALL' }))}
-                    className={`flex items-center justify-center py-2 text-sm rounded-lg border transition-colors ${filters.participationType === 'ALL'
-                      ? 'bg-blue-50 border-blue-200 text-blue-700'
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                      }`}
-                  >
-                    All
-                  </button>
-                  <button
-                    onClick={() => setFilters(prev => ({ ...prev, participationType: 'INDIVIDUAL' }))}
-                    className={`flex items-center justify-center py-2 text-sm rounded-lg border transition-colors ${filters.participationType === 'INDIVIDUAL'
-                      ? 'bg-blue-50 border-blue-200 text-blue-700'
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                      }`}
-                  >
-                    Individual
-                  </button>
-                  <button
-                    onClick={() => setFilters(prev => ({ ...prev, participationType: 'TEAM' }))}
-                    className={`flex items-center justify-center py-2 text-sm rounded-lg border transition-colors ${filters.participationType === 'TEAM'
-                      ? 'bg-blue-50 border-blue-200 text-blue-700'
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                      }`}
-                  >
-                    Team
-                  </button>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Participation Type</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['ALL', 'INDIVIDUAL', 'TEAM'].map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setFilters(prev => ({ ...prev, participationType: type }))}
+                      className={`py-2 text-sm font-medium rounded-md transition-colors ${filters.participationType === type ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
+                    >
+                      {type === 'ALL' ? 'All' : type}
+                    </button>
+                  ))}
                 </div>
               </div>
 
+              {/* Gender Filter - Improved color coding */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Gender</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => setFilters(prev => ({ ...prev, gender: 'ALL' }))}
-                    className={`flex items-center justify-center py-2 text-sm rounded-lg border transition-colors ${filters.gender === 'ALL'
-                      ? 'bg-blue-50 border-blue-200 text-blue-700'
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                      }`}
-                  >
-                    All
-                  </button>
-                  <button
-                    onClick={() => setFilters(prev => ({ ...prev, gender: 'M' }))}
-                    className={`flex items-center justify-center py-2 text-sm rounded-lg border transition-colors ${filters.gender === 'M'
-                      ? 'bg-blue-50 border-blue-200 text-blue-700'
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                      }`}
-                  >
-                    Male
-                  </button>
-                  <button
-                    onClick={() => setFilters(prev => ({ ...prev, gender: 'F' }))}
-                    className={`flex items-center justify-center py-2 text-sm rounded-lg border transition-colors ${filters.gender === 'F'
-                      ? 'bg-pink-50 border-pink-200 text-pink-700'
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                      }`}
-                  >
-                    Female
-                  </button>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Gender</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['ALL', 'M', 'F'].map((gender) => (
+                    <button
+                      key={gender}
+                      onClick={() => setFilters(prev => ({ ...prev, gender }))}
+                      className={`py-2 text-sm font-medium rounded-md transition-colors ${filters.gender === gender
+                        ? gender === 'M'
+                          ? 'bg-blue-600 text-white'
+                          : gender === 'F'
+                            ? 'bg-pink-600 text-white'
+                            : 'bg-gray-600 text-white'
+                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        }`}
+                    >
+                      {gender === 'ALL' ? 'All' : gender === 'M' ? 'Male' : 'Female'}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
 
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium text-gray-700">Events ({filteredEvents.length})</h4>
+            {/* Event List - Improved scrolling and selection indicator */}
+            <div className="mt-8">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-semibold text-gray-900">Available Events</h4>
+                <span className="text-xs text-gray-500">{filteredEvents.length} results</span>
               </div>
-              <div className="max-h-[calc(100vh-300px)] overflow-y-auto pr-2 space-y-1">
+              <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto pr-2">
                 {filteredEvents.map(event => (
                   <div
                     key={event.id}
                     onClick={() => setSelectedEvent(event)}
-                    className={`group p-3 rounded-lg cursor-pointer transition-all border ${selectedEvent?.id === event.id
-                      ? 'bg-blue-50 border-blue-200 shadow-sm'
-                      : 'bg-white border-transparent hover:border-blue-100'
+                    className={`group p-4 rounded-lg cursor-pointer transition-all border-2 ${selectedEvent?.id === event.id
+                      ? 'border-blue-500 bg-blue-50 shadow-sm'
+                      : 'border-transparent hover:border-blue-200 bg-white'
                       }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="text-sm font-medium text-gray-800">
+                        <h3 className="text-base font-semibold text-gray-900 mb-1">
                           {event.category.replace(/_/g, ' ')}
-                        </div>
-                        <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-                          <span>{event.age_category.replace(/_/g, ' ')}</span>
+                        </h3>
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <span className="capitalize">{event.age_category.replace(/_/g, ' ')}</span>
                           <span className="text-gray-300">•</span>
-                          <span className={`font-medium ${event.gender === 'M' ? 'text-blue-600' : 'text-pink-600'}`}>
+                          <span className={`font-medium ${event.gender === 'M' ? 'text-blue-600' : 'text-pink-600'
+                            }`}>
                             {event.gender === 'M' ? 'Male' : 'Female'}
                           </span>
                         </div>
                       </div>
-                      {selectedEvent?.id === event.id && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 ml-2 flex-shrink-0" />
-                      )}
                     </div>
                     {event.weight_category && (
-                      <div className="mt-2">
-                        <span className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded">
+                      <div className="mt-3">
+                        <span className="inline-block px-2.5 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
                           {event.weight_category}
                         </span>
                       </div>
@@ -291,108 +267,108 @@ const EventParticipants = () => {
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Main Content - Enhanced card design and table styling */}
         <div className="flex-1">
           {selectedEvent ? (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-              <div className="px-5 py-4 border-b border-gray-100">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+              {/* Header with action buttons */}
+              <div className="px-6 py-5 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-base font-semibold text-gray-900">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">
                       {selectedEvent.category.replace(/_/g, ' ')}
                     </h2>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-gray-500">
-                        {selectedEvent.age_category.replace(/_/g, ' ')}
-                      </span>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <span>{selectedEvent.age_category.replace(/_/g, ' ')}</span>
                       <span className="text-gray-300">•</span>
-                      <span className={`text-xs ${selectedEvent.gender === 'M' ? 'text-blue-600' : 'text-pink-600'
+                      <span className={`font-medium ${selectedEvent.gender === 'M' ? 'text-blue-600' : 'text-pink-600'
                         }`}>
                         {selectedEvent.gender === 'M' ? 'Male' : 'Female'}
                       </span>
                       {selectedEvent.weight_category && (
                         <>
                           <span className="text-gray-300">•</span>
-                          <span className="text-xs text-gray-500">
+                          <span className="font-medium">
                             {selectedEvent.weight_category}
                           </span>
                         </>
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-2">
                     <button
                       onClick={exportParticipantsPDF}
-                      className="p-1.5 hover:bg-gray-50 rounded-lg"
+                      className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
                       title="Export PDF"
                       disabled={!participants.length}
                     >
-                      <ArrowDownTrayIcon className="w-4 h-4 text-gray-600" />
+                      <ArrowDownTrayIcon className="w-5 h-5 text-gray-600" />
                     </button>
                     <button
                       onClick={handleGenerateBrackets}
-                      className="p-1.5 hover:bg-gray-50 rounded-lg"
+                      className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
                       title="Generate Brackets"
                       disabled={!participants.length}
                     >
-                      <EyeIcon className="w-4 h-4 text-gray-600" />
+                      <EyeIcon className="w-5 h-5 text-gray-600" />
                     </button>
                   </div>
                 </div>
               </div>
 
+              {/* Content Area - Improved table styling */}
               {loading ? (
-                <div className="flex justify-center items-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="flex justify-center items-center py-16">
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
                 </div>
               ) : participants.length === 0 ? (
-                <div className="text-center p-8">
-                  <p className="text-gray-500 mb-4">No participants registered yet</p>
+                  <div className="text-center p-12">
+                    <p className="text-gray-500 mb-6">No participants registered yet</p>
                   <button
                     onClick={() => navigate(`/tournament/${id}/participants/add`)}
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                      className="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                   >
-                    <PlusCircleIcon className="w-4 h-4 mr-2" />
+                      <PlusCircleIcon className="w-5 h-5 mr-2" />
                     Add Participant
                   </button>
                 </div>
               ) : (
-                <div className="overflow-hidden">
-                  <table className="w-full">
+                    <div className="overflow-x-auto">
+                      <table className="w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
                         {['Name', 'Age', 'Weight', 'Belt'].map((header) => (
                           <th
                             key={header}
-                            className="px-4 py-2.5 text-left text-xs font-medium text-gray-500"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                           >
                             {header}
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                        <tbody className="bg-white divide-y divide-gray-200">
                       {participants.map(participant => (
                         <tr
                           key={participant.id}
-                          className="hover:bg-gray-50"
+                          className="hover:bg-gray-50 transition-colors"
                         >
-                          <td className="px-4 py-2.5">
+                          <td className="px-6 py-4">
                             <div className="text-sm font-medium text-gray-900">
                               {participant.full_name}
                             </div>
-                            <div className="text-xs text-gray-500 mt-0.5">
+                            <div className="text-sm text-gray-500 mt-1">
                               {participant.club}
                             </div>
                           </td>
-                          <td className="px-4 py-2.5 text-sm text-gray-600">
+                          <td className="px-6 py-4 text-sm text-gray-600">
                             {participant.age}
                           </td>
-                          <td className="px-4 py-2.5 text-sm text-gray-600">
+                          <td className="px-6 py-4 text-sm text-gray-600">
                             {participant.weight ? `${participant.weight}kg` : '-'}
                           </td>
-                          <td className="px-4 py-2.5">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                               {participant.belt_rank}
                             </span>
                           </td>
@@ -404,9 +380,9 @@ const EventParticipants = () => {
               )}
             </div>
           ) : (
-            <div className="h-full flex items-center justify-center bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-              <div className="text-center text-gray-400">
-                <span className="text-sm">Select an event to view participants</span>
+              <div className="h-96 flex items-center justify-center bg-white rounded-xl shadow-sm border-2 border-dashed border-gray-200">
+                <div className="text-center">
+                  <span className="text-sm text-gray-400">Select an event to view participants</span>
               </div>
             </div>
           )}
