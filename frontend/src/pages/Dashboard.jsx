@@ -1,13 +1,58 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-import { 
-  CalendarIcon, 
-  MapPinIcon, 
+import { motion } from 'framer-motion'
+import {
+  CalendarIcon,
+  MapPinIcon,
   ChartBarIcon,
   UserGroupIcon,
-  PlusIcon
+  PlusIcon,
+  TrophyIcon,
+  ExclamationCircleIcon
 } from '@heroicons/react/24/outline'
+
+// Animation configurations
+const pageVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.5 } },
+  exit: { opacity: 0 }
+}
+
+const headerVariants = {
+  hidden: { y: -50, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 120, damping: 20 }
+  }
+}
+
+const cardContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+}
+
+const cardItemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 150 }
+  }
+}
+
+const hoverCard = {
+  scale: 1.02,
+  boxShadow: '0px 20px 40px -10px rgba(0, 0, 0, 0.1)',
+  transition: { type: 'spring', stiffness: 300 }
+}
 
 const Dashboard = () => {
   const [tournaments, setTournaments] = useState([])
@@ -26,148 +71,201 @@ const Dashboard = () => {
         setLoading(false)
       }
     }
-
     fetchTournaments()
   }, [])
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-karate-blue"></div>
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex justify-center items-center min-h-screen"
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+          className="h-16 w-16 rounded-full border-4 border-blue-600 border-t-transparent"
+        />
+      </motion.div>
     )
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="sm:flex sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Tournaments</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Manage your karate tournaments and track their progress
-          </p>
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageVariants}
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100"
+    >
+      {/* Header Section */}
+      <motion.div
+        variants={headerVariants}
+        className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 pt-8 pb-24 shadow-xl"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="flex-1">
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-3xl font-bold text-white mb-2"
+              >
+                Tournaments
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { delay: 0.2 } }}
+                className="text-gray-200 font-medium"
+              >
+                Manage your martial arts competitions
+              </motion.p>
+            </div>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="mt-6 md:mt-0"
+            >
+              <Link
+                to="/tournament/create"
+                className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-6 py-3 rounded-xl font-medium flex items-center transition-all hover:shadow-lg"
+              >
+                <PlusIcon className="h-5 w-5 mr-2" />
+                New Tournament
+              </Link>
+            </motion.div>
+          </div>
         </div>
-        <div className="mt-4 sm:mt-0">
-          <Link
-            to="/tournament/create"
-            className="btn-primary"
+      </motion.div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16">
+        {error && (
+          <motion.div
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg mb-8"
           >
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Create Tournament
-          </Link>
-        </div>
+            <div className="flex items-center">
+              <ExclamationCircleIcon className="h-5 w-5 text-red-400 mr-3" />
+              <span className="text-sm text-red-700">{error}</span>
+            </div>
+          </motion.div>
+        )}
+
+        {tournaments.length === 0 ? (
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white/90 backdrop-blur-sm rounded-2xl p-12 text-center shadow-xl border border-gray-100"
+          >
+            <div className="mx-auto h-24 w-24 text-gray-300 mb-4">
+              <TrophyIcon className="h-full w-full" />
+            </div>
+            <h3 className="text-gray-900 font-medium text-xl mb-2">No tournaments found</h3>
+            <p className="text-gray-600 mb-6">Create your first tournament to get started</p>
+            <motion.div whileHover={{ scale: 1.05 }}>
+              <Link
+                to="/tournament/create"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-medium inline-flex items-center shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <PlusIcon className="h-5 w-5 mr-2" />
+                Create Tournament
+              </Link>
+            </motion.div>
+          </motion.div>
+        ) : (
+            <motion.div
+              variants={cardContainerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+            >
+              {tournaments.map((tournament) => (
+              <motion.div
+                key={tournament.id}
+                variants={cardItemVariants}
+                whileHover={hoverCard}
+                className="relative"
+              >
+                <Link
+                  to={`/tournament/${tournament.id}`}
+                  className="group bg-white/90 backdrop-blur-sm hover:bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-200 block h-full"
+                >
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 truncate">
+                          {tournament.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                          {tournament.description}
+                        </p>
+                      </div>
+                      <motion.div
+                        whileHover={{ rotate: 15 }}
+                        className="bg-blue-100/80 p-2 rounded-lg ml-4"
+                      >
+                        <TrophyIcon className="h-6 w-6 text-blue-600" />
+                      </motion.div>
+                    </div>
+
+                    <div className="space-y-3 text-sm text-gray-600">
+                      <div className="flex items-center space-x-2">
+                        <CalendarIcon className="h-5 w-5 text-gray-500" />
+                        <span>{new Date(tournament.date).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <MapPinIcon className="h-5 w-5 text-gray-500" />
+                        <span className="truncate">{tournament.venue}</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 grid grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+                      <div className="flex items-center space-x-3">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          className="p-2 bg-blue-100 rounded-lg"
+                        >
+                          <UserGroupIcon className="h-5 w-5 text-blue-600" />
+                        </motion.div>
+                        <div>
+                          <div className="text-xs text-gray-500">Participants</div>
+                          <div className="font-bold text-gray-900">
+                            {tournament.participant_count || 0}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          className="p-2 bg-purple-100 rounded-lg"
+                        >
+                          <ChartBarIcon className="h-5 w-5 text-purple-600" />
+                        </motion.div>
+                        <div>
+                          <div className="text-xs text-gray-500">Events</div>
+                          <div className="font-bold text-gray-900">
+                            {tournament.event_count || 0}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-purple-600"
+                    style={{ originX: 0 }}
+                  />
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
-
-      {error && (
-        <div className="mt-6 rounded-md bg-red-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {tournaments.length === 0 ? (
-        <div className="mt-12 text-center">
-          <svg
-            className="mx-auto h-12 w-12 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-            />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No tournaments</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Get started by creating a new tournament.
-          </p>
-          <div className="mt-6">
-            <Link
-              to="/tournament/create"
-              className="btn-primary"
-            >
-              <PlusIcon className="h-5 w-5 mr-2" />
-              Create Tournament
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {tournaments.map((tournament) => (
-            <Link
-              key={tournament.id}
-              to={`/tournament/${tournament.id}`}
-              className="group relative bg-white rounded-lg shadow-sm ring-1 ring-gray-200 hover:shadow-lg hover:ring-gray-300 transition-all duration-150 overflow-hidden"
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900 truncate">
-                    {tournament.name}
-                  </h3>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                      ${getTournamentStatusStyle(tournament.status)}`}
-                  >
-                    {tournament.status}
-                  </span>
-                </div>
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <CalendarIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-                    {new Date(tournament.date).toLocaleDateString()}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <MapPinIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-                    {tournament.venue}
-                  </div>
-                </div>
-                <div className="mt-6 grid grid-cols-2 gap-4">
-                  <div className="group flex items-center text-sm text-gray-500">
-                    <UserGroupIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-                    <span>12 Participants</span>
-                  </div>
-                  <div className="group flex items-center text-sm text-gray-500">
-                    <ChartBarIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-                    <span>8 Events</span>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-karate-blue to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
+    </motion.div>
   )
-}
-
-const getTournamentStatusStyle = (status) => {
-  switch (status) {
-    case 'DRAFT':
-      return 'bg-gray-100 text-gray-800'
-    case 'PUBLISHED':
-      return 'bg-blue-100 text-blue-800'
-    case 'IN_PROGRESS':
-      return 'bg-green-100 text-green-800'
-    case 'COMPLETED':
-      return 'bg-purple-100 text-purple-800'
-    case 'CANCELLED':
-      return 'bg-red-100 text-red-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
-  }
 }
 
 export default Dashboard

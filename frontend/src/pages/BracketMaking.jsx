@@ -5,9 +5,7 @@ import { PlusCircleIcon, ArrowDownTrayIcon, EyeIcon } from '@heroicons/react/24/
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-
-
-// Add this shuffle function at the top of the file
+// Funtion for shuffling the participants
 const shuffleArray = (array) => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {

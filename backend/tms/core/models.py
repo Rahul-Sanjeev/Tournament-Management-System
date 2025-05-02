@@ -1,8 +1,9 @@
+import math
+import random
+
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
-import math
-import random
 
 
 class Tournament(models.Model):
@@ -37,6 +38,7 @@ class Event(models.Model):
     AGE_CATEGORIES = [
         ('CADET', '14-15 years'),
         ('JUNIOR', '16-17 years'),
+        ('U21','18-20 years'),
         ('SENIOR', '18+ years')
     ]
 

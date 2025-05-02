@@ -144,196 +144,186 @@ const Timer = () => {
   }, [handleKeyPress])
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-        {/* Match Type Selection */}
-        <div className="p-4 bg-gray-50 border-b">
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(MATCH_PRESETS).map(([key, preset]) => (
-              <button
-                key={key}
-                onClick={() => resetTimer(key)}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${selectedPreset === key
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-              >
-                {preset.name}
-              </button>
-            ))}
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+          {/* Header Section */}
+          <div className="p-4 bg-gray-700 flex items-center justify-between">
+            <div className="flex gap-2">
+              {Object.entries(MATCH_PRESETS).map(([key, preset]) => (
+                <button
+                  key={key}
+                  onClick={() => resetTimer(key)}
+                  className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${selectedPreset === key
+                    ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white'
+                    : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                    }`}
+                >
+                  {preset.name}
+                </button>
+              ))}
+            </div>
             <button
               onClick={() => setIsSoundEnabled(!isSoundEnabled)}
-              className={`ml-auto px-3 py-1 rounded text-sm font-medium transition-colors ${isSoundEnabled ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              className={`p-2 rounded-full ${isSoundEnabled ? 'text-green-400 hover:bg-green-900/50' : 'text-red-400 hover:bg-red-900/50'
                 }`}
             >
               {isSoundEnabled ? (
-                <SpeakerWaveIcon className="h-5 w-5" />
+                <SpeakerWaveIcon className="h-6 w-6" />
               ) : (
-                <SpeakerXMarkIcon className="h-5 w-5" />
+                  <SpeakerXMarkIcon className="h-6 w-6" />
               )}
             </button>
           </div>
-        </div>
 
-        {/* Timer Display */}
-        <div className="p-8 text-center">
-          <div className={`text-6xl font-mono font-bold mb-8 ${time <= 10 && time > 0 ? 'text-red-600 animate-pulse' : ''
-            }`}>
-            {formatTime(time)}
-          </div>
-
-          {/* Timer Controls */}
-          <div className="flex justify-center space-x-4 mb-8">
-            <button
-              onClick={toggleTimer}
-              className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${isRunning
-                  ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-green-600 text-white hover:bg-green-700'
-                }`}
-            >
-              {isRunning ? (
-                <>
-                  <PauseIcon className="h-5 w-5 mr-2" />
-                  Pause
-                </>
-              ) : (
-                <>
-                  <PlayIcon className="h-5 w-5 mr-2" />
-                  Start
-                </>
-              )}
-            </button>
-            <button
-              onClick={() => resetTimer()}
-              className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700"
-            >
-              <ArrowPathIcon className="h-5 w-5 mr-2" />
-              Reset
-            </button>
-          </div>
-
-          {/* Scoreboard */}
-          <div className="grid grid-cols-2 gap-8">
-            {/* AKA */}
-            <div className={`space-y-4 p-4 rounded-lg ${warnings.aka >= 2 ? 'bg-red-50' : ''}`}>
-              <div className="text-2xl font-bold text-red-600">AKA</div>
-              <div className="text-4xl font-bold">{points.aka}</div>
-              <div className="flex justify-center space-x-2">
-                <button
-                  onClick={() => updatePoints('aka', 1)}
-                  className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
-                  title="Shift + 1"
-                >
-                  +1
-                </button>
-                <button
-                  onClick={() => updatePoints('aka', -1)}
-                  className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
-                >
-                  -1
-                </button>
+          {/* Main Timer Display */}
+          <div className="p-8 bg-gradient-to-br from-gray-900 to-gray-800">
+            <div className={`text-center mb-8 ${time <= 10 && time > 0 ? 'animate-pulse' : ''
+              }`}>
+              <div className={`text-8xl font-digital mb-2 ${time <= 10 ? 'text-red-500' : 'text-cyan-400'
+                }`}>
+                {formatTime(time)}
               </div>
-              <div>
-                <button
-                  onClick={() => addWarning('aka')}
-                  className={`px-3 py-1 rounded hover:bg-yellow-200 ${warnings.aka >= 2
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                    }`}
-                  title="Shift + W"
-                >
-                  Warning ({warnings.aka})
-                </button>
-              </div>
+              <div className="text-sm text-gray-400">OFFICIAL KARATE TIMER</div>
             </div>
 
-            {/* AO */}
-            <div className={`space-y-4 p-4 rounded-lg ${warnings.ao >= 2 ? 'bg-red-50' : ''}`}>
-              <div className="text-2xl font-bold text-blue-600">AO</div>
-              <div className="text-4xl font-bold">{points.ao}</div>
-              <div className="flex justify-center space-x-2">
-                <button
-                  onClick={() => updatePoints('ao', 1)}
-                  className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                  title="Ctrl/Cmd + 1"
-                >
-                  +1
-                </button>
-                <button
-                  onClick={() => updatePoints('ao', -1)}
-                  className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                >
-                  -1
-                </button>
+            {/* Control Buttons */}
+            <div className="flex justify-center gap-4 mb-12">
+              <button
+                onClick={toggleTimer}
+                className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-transform ${isRunning
+                  ? 'bg-red-600 hover:bg-red-700'
+                  : 'bg-green-600 hover:bg-green-700'
+                  }`}
+              >
+                {isRunning ? (
+                  <>
+                    <PauseIcon className="h-6 w-6" />
+                    Pause
+                  </>
+                ) : (
+                  <>
+                    <PlayIcon className="h-6 w-6" />
+                    Start
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => resetTimer()}
+                className="px-6 py-3 bg-gray-600 hover:bg-gray-500 rounded-xl font-bold flex items-center gap-2"
+              >
+                <ArrowPathIcon className="h-6 w-6" />
+                Reset
+              </button>
+            </div>
+
+            {/* Scoreboards */}
+            <div className="grid grid-cols-2 gap-8">
+              {/* AKA Section */}
+              <div className={`p-6 rounded-xl transition-all ${warnings.aka >= 2 ? 'bg-red-900/50' : 'bg-red-900/30'
+                }`}>
+                <div className="text-center mb-6">
+                  <div className="text-3xl font-bold text-red-500 mb-2">AKA</div>
+                  <div className="text-6xl font-digital">{points.aka}</div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => updatePoints('aka', 1)}
+                    className="py-2 bg-red-600 hover:bg-red-700 rounded-lg font-bold"
+                  >
+                    +1 POINT
+                  </button>
+                  <button
+                    onClick={() => updatePoints('aka', -1)}
+                    className="py-2 bg-red-800 hover:bg-red-900 rounded-lg"
+                  >
+                    -1 POINT
+                  </button>
+                </div>
+                <div className="mt-4">
+                  <button
+                    onClick={() => addWarning('aka')}
+                    className={`w-full py-2 rounded-lg font-bold ${warnings.aka >= 2
+                      ? 'bg-red-800 text-red-200'
+                      : 'bg-red-600 hover:bg-red-700'
+                      }`}
+                  >
+                    WARNINGS ({warnings.aka})
+                  </button>
+                </div>
               </div>
-              <div>
-                <button
-                  onClick={() => addWarning('ao')}
-                  className={`px-3 py-1 rounded hover:bg-yellow-200 ${warnings.ao >= 2
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                    }`}
-                  title="Ctrl/Cmd + W"
-                >
-                  Warning ({warnings.ao})
-                </button>
+
+              {/* AO Section */}
+              <div className={`p-6 rounded-xl transition-all ${warnings.ao >= 2 ? 'bg-blue-900/50' : 'bg-blue-900/30'
+                }`}>
+                <div className="text-center mb-6">
+                  <div className="text-3xl font-bold text-blue-400 mb-2">AO</div>
+                  <div className="text-6xl font-digital">{points.ao}</div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => updatePoints('ao', 1)}
+                    className="py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold"
+                  >
+                    +1 POINT
+                  </button>
+                  <button
+                    onClick={() => updatePoints('ao', -1)}
+                    className="py-2 bg-blue-800 hover:bg-blue-900 rounded-lg"
+                  >
+                    -1 POINT
+                  </button>
+                </div>
+                <div className="mt-4">
+                  <button
+                    onClick={() => addWarning('ao')}
+                    className={`w-full py-2 rounded-lg font-bold ${warnings.ao >= 2
+                      ? 'bg-blue-800 text-blue-200'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                      }`}
+                  >
+                    WARNINGS ({warnings.ao})
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Match End Dialog */}
-        {showEndDialog && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-xl">
-              <h3 className="text-lg font-bold mb-4">Match Ended</h3>
-              <div className="text-center mb-4">
-                <div className="text-xl">
-                  Winner:{' '}
-                  <span className={`font-bold ${points.aka > points.ao ? 'text-red-600' :
-                      points.ao > points.aka ? 'text-blue-600' : ''
-                    }`}>
-                    {points.aka > points.ao
-                      ? 'AKA'
+          {/* Match End Dialog */}
+          {showEndDialog && (
+            <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4">
+              <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full">
+                <h3 className="text-2xl font-bold text-center mb-6">MATCH ENDED</h3>
+                <div className="text-center mb-8">
+                  <div className="text-xl font-semibold mb-4">
+                    Winner: {' '}
+                    <span className={`text-3xl ${points.aka > points.ao
+                      ? 'text-red-500'
                       : points.ao > points.aka
-                        ? 'AO'
-                        : 'DRAW'}
-                  </span>
+                        ? 'text-blue-400'
+                        : 'text-yellow-400'
+                      }`}>
+                      {points.aka > points.ao ? 'AKA' : points.ao > points.aka ? 'AO' : 'DRAW'}
+                    </span>
+                  </div>
+                  <div className="text-lg">
+                    AKA {points.aka} - {points.ao} AO
+                  </div>
                 </div>
-                <div className="mt-2">
-                  Final Score: AKA {points.aka} - {points.ao} AO
-                </div>
-              </div>
-              <div className="flex justify-center">
                 <button
                   onClick={() => resetTimer()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl font-bold"
                 >
-                  New Match
+                  START NEW MATCH
                 </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Keyboard Shortcuts Info */}
-        <div className="bg-gray-50 px-4 py-3 text-sm text-gray-500">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <strong>General:</strong>
-              <ul>
-                <li>Space - Start/Pause</li>
-                <li>R - Reset</li>
-              </ul>
-            </div>
-            <div>
-              <strong>Scoring:</strong>
-              <ul>
-                <li>Shift + 1 - Point for AKA</li>
-                <li>Ctrl/Cmd + 1 - Point for AO</li>
-                <li>Shift + W - Warning for AKA</li>
-                <li>Ctrl/Cmd + W - Warning for AO</li>
-              </ul>
+          {/* Keyboard Shortcuts */}
+          <div className="p-4 bg-gray-700/50">
+            <div className="text-center text-sm text-gray-400">
+              Keyboard Shortcuts: Space=Start/Pause, R=Reset, Shift+1=AKA Point, Ctrl+1=AO Point
             </div>
           </div>
         </div>

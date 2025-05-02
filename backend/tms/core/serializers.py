@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Event, Match, Participant, Tournament, Bracket
+from .models import Bracket, Event, Match, Participant, Tournament
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -1,1 +1,25 @@
 @import "tailwindcss";
+@font-face {
+    font-family: 'Digital';
+    src: url('https://fonts.cdnfonts.com/s/29508/DS-DIGII.woff') format('woff');
+}
+
+.font-digital {
+    font-family: 'Digital', monospace;
+    letter-spacing: 2px;
+}
+
+
+.btn-primary,
+.btn-secondary {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.participant-card {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.participant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}

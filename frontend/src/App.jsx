@@ -35,6 +35,7 @@ function App() {
 
               <Route path="/tournament/:id/participants/add" element={<ParticipantAdd />} />
               <Route path="/tournament/:id/participants/:participantId/edit" element={<ParticipantEdit />} />
+              <Route path="/timer" element={<Timer />} />
               <Route path="/tournament/:id/timer" element={<Timer />} />
             </Route>
           </Route>
