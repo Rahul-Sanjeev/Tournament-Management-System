@@ -62,13 +62,25 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTournaments = async () => {
       try {
-        const response = await axios.get('/api/tournaments/')
-        // Ensure API returns participant_count and event_count
-        setTournaments(response.data.map(t => ({
-          ...t,
-          participant_count: t.participants?.length || 0,
-          event_count: t.events?.length || 0
-        })))
+        // First fetch all tournaments
+        const tournamentsRes = await axios.get('/api/tournaments/')
+
+        /// Then fetch counts for each tournament
+        const tournamentsWithCounts = await Promise.all(
+          tournamentsRes.data.map(async (tournament) => {
+            const [participantsRes, eventsRes] = await Promise.all([
+              axios.get(`/api/participants/?tournament=${tournament.id}`),
+              axios.get(`/api/events/?tournament=${tournament.id}`)
+            ])
+
+            return {
+              ...tournament,
+              participant_count: participantsRes.data.length,
+              event_count: eventsRes.data.length
+            }
+          })
+        )
+        setTournaments(tournamentsWithCounts)
         setError(null)
       } catch (err) {
         setError('Failed to fetch tournaments')
@@ -76,8 +88,10 @@ const Dashboard = () => {
         setLoading(false)
       }
     }
+
     fetchTournaments()
   }, [])
+
 
   // Keep loading spinner from TournamentView
   if (loading) {
