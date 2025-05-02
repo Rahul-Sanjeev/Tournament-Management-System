@@ -5,6 +5,9 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+
 const TournamentCreate = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -30,57 +33,12 @@ const TournamentCreate = () => {
     }
   }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
+  const handleDateChange = (date) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      date: date ? date.toISOString().split('T')[0] : ''
     }))
   }
-
-  const FloatingLabelInput = ({ id, label, type = 'text', required = true, value, onChange, ...props }) => (
-    <div className="relative">
-      <input
-        id={id}
-        name={id}
-        type={type}
-        required={required}
-        value={value}
-        onChange={onChange}
-        placeholder=" "
-        className="block w-full px-4 py-3 text-gray-900 placeholder-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
-        {...props}
-      />
-      <label
-        htmlFor={id}
-        className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-blue-600"
-      >
-        {label}
-      </label>
-    </div>
-  )
-
-  const FloatingLabelTextarea = ({ id, label, rows = 4, required = true, value, onChange, ...props }) => (
-    <div className="relative">
-      <textarea
-        id={id}
-        name={id}
-        rows={rows}
-        required={required}
-        value={value}
-        onChange={onChange}
-        placeholder=" "
-        className="block w-full px-4 py-3 text-gray-900 placeholder-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
-        {...props}
-      />
-      <label
-        htmlFor={id}
-        className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-blue-600"
-      >
-        {label}
-      </label>
-    </div>
-  )
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -92,61 +50,99 @@ const TournamentCreate = () => {
         <ArrowLeftIcon className="mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
         Back to Dashboard
       </button>
+
       <div className="bg-white shadow-sm rounded-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Tournament</h2>
-        <div className="space-y-8">
+
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-6">
-            <FloatingLabelInput
-              id="name"
-              label="Tournament Name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-            <FloatingLabelInput
-              id="date"
-              label="Tournament Date"
-              type="date"
-              value={formData.date}
-              onChange={handleChange}
-              min={new Date().toISOString().split('T')[0]}
-            />
-            <FloatingLabelInput
-              id="venue"
-              label="Venue"
-              value={formData.venue}
-              onChange={handleChange}
-            />
-            <FloatingLabelTextarea
-              id="description"
-              label="Description"
-              value={formData.description}
-              onChange={handleChange}
-            />
+            <div className="grid grid-cols-1 gap-6">
+              {/* Tournament Name */}
+              <div className="relative">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <label className="absolute left-4 -top-2.5 bg-white px-2 text-sm text-gray-600">
+                  Tournament Name
+                </label>
+              </div>
+
+              {/* Visible Date Input */}
+              <div className="relative">
+                <DatePicker
+                  selected={formData.date ? new Date(formData.date) : null}
+                  onChange={handleDateChange}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="Select tournament date"
+                  minDate={new Date()}
+                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  popperPlacement="bottom-start"
+                />
+                <label className="absolute left-4 -top-2.5 bg-white px-2 text-sm text-gray-600">
+                  Tournament Date
+                </label>
+              </div>
+
+              {/* Venue */}
+              <div className="relative">
+                <input
+                  id="venue"
+                  name="venue"
+                  type="text"
+                  required
+                  value={formData.venue}
+                  onChange={(e) => setFormData(prev => ({ ...prev, venue: e.target.value }))}
+                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <label className="absolute left-4 -top-2.5 bg-white px-2 text-sm text-gray-600">
+                  Venue
+                </label>
+              </div>
+
+              {/* Description */}
+              <div className="relative">
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="4"
+                  required
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  className="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <label className="absolute left-4 -top-2.5 bg-white px-2 text-sm text-gray-600">
+                  Description
+                </label>
+              </div>
+            </div>
           </div>
-          <div className="flex justify-end space-x-3">
+
+          <div className="flex justify-end space-x-3 pt-6">
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               Cancel
             </button>
             <button
-              onClick={handleSubmit}
+              type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creating...
-                </div>
-              ) : (
-                'Create Tournament'
-              )}
+              {loading ? 'Creating...' : 'Create Tournament'}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )
