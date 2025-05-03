@@ -89,6 +89,7 @@ class Event(models.Model):
 
 class Participant(models.Model):
     BELT_RANKS = [
+        ('NIL', 'Not Applicable'),
         ('9KYU', '9th Kyu - White Belt'),
         ('8KYU', '8th Kyu - Yellow Belt'),
         ('7KYU', '7th Kyu - Orange Belt'),
